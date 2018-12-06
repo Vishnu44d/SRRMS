@@ -1,2 +1,1 @@
-This is initial setup of project.
-Testing...
+Pyhon version 3.6 32 bit
