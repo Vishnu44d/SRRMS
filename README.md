@@ -1,1 +1,1 @@
-Pyhon version 3.6 32 bit
+requirement.txt have all the required packages name.
