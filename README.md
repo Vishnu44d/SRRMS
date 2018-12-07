@@ -27,11 +27,26 @@
     pip install -r requirements.txt
     ```
   - #### Step 4
-    Run the server
-    ```bash
-    cd environment/SRRMS
-    python manage.py run
-    ```
+    - initialize database
+      ```bash
+        python manage.py db init
+      ```
+    - migrate database
+       ```bash
+        python manage.py db migrate
+      ```
+    - update database
+      ```bash
+        python manage.py db upgrade
+      ```
+    - tsting the system
+      ```bash
+        python manage.py test
+      ```
+    - running the server
+      ```bash
+        python manage.py run
+      ```
 
 
 
