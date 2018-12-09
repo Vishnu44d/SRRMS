@@ -3,11 +3,23 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from SRRMSv2.models import db
 from SRRMSv2.api import statusBP, testBP, userBP
+from SRRMSv2.config import *
+from SRRMSv2 import create_db_engine, create_db_sessionFactory
+
+config_name = 'dev'
+
+
+engine = create_db_engine(DevelopmentConfig)
+SessionFactory = create_db_sessionFactory(engine)
+
+SQLSession = create_db_sessionFactory(engine)
+
+
 
 
 app = Flask(__name__)
 Migrate(app, db)
-
+app.config.from_object(config_by_name[config_name])
 with app.app_context():
     db.init_app(app)
 

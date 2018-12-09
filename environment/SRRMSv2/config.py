@@ -24,6 +24,7 @@ class ProductionConfig(Config):
     # SQLALCHEMY_DATABASE_URI = postgres_local_base
 
 
+
 config_by_name = dict(
     dev=DevelopmentConfig,
     prod=ProductionConfig

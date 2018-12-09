@@ -3,21 +3,34 @@ from SRRMSv2.models.userModel import User
 import uuid
 import datetime
 from SRRMSv2.models.userModel import db
+import json
+from SRRMSv2.auth.auth import validate_key
 
 userBP = Blueprint('userApi', __name__)
 
 @userBP.route('/add', methods=['GET', 'POST'])
 def useraction():
-    db.create_all()
+    
     if request.method == 'POST':
         data = request.json
-        return save_new_user(data=data)
-    elif request.method == 'GET':
-        return get_all_users()
+        if data['action'] == "add":
+            return save_new_user(data=data)
+    #elif request.method == 'GET':
+        elif data['action'] == "get":
+            if validate_key(data['key']):
+                return get_all_users()
+            else:
+                response_object = {
+                    'status': 'fail',
+                    'message': 'provide valid key',
+                }
+                return jsonify(response_object), 400
 
 
 def save_new_user(data):
-    user = User.query.filter_by(email=data['email']).first()
+    from SRRMSv2.server import SQLSession
+    session = SQLSession()
+    user = session.query(User).filter_by(email=data['email']).first()
     if not user:
         new_user = User(
             public_id=str(uuid.uuid4()),
@@ -27,8 +40,8 @@ def save_new_user(data):
             registered_on=datetime.datetime.utcnow()
         )
         try:
-            db.session.add(new_user)
-            db.session.commit()
+            session.add(new_user)
+            session.commit()
         except:
             response_object = {
                 'status': 'fail',
@@ -52,9 +65,19 @@ def save_new_user(data):
 
 
 def get_all_users():
-    response_object = {
-        'status': 'success',
-        'data': User.query.first()
-    }
+    from SRRMSv2.server import SQLSession
+    session = SQLSession()
+    users_ = session.query(User).all()
+    users_ = [{"name": i.username, "email":i.email} for i in users_]
+    if len(users_) == 0:
+        response_object = {
+            'status': 'success',
+            'message': 'No user yer!' 
+        }
+    else:
+        response_object = {
+            'status': 'success',
+            'users': users_
+        }
     return jsonify(response_object), 200
 
